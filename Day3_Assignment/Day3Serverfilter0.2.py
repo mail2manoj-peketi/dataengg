@@ -10,14 +10,17 @@ def serverCreator(i) :
                              "status" : choice(['UP','DOWN']), 
                              "cpuusage" : random.randint(1,100) , 
                              "diskusage" : random.randint(1,100)
-                             })
+                             })   
 def usageFilter(serverInventory) :
     highCpu, highDu = [], []
+    highestCpu, highestDu = [],[]
+    highestCpuInt, highestDuInt = 0,0
     for i in serverInventory :
         if (i.get("cpuusage")>=80) :
-            highCpu.append(i.get("hostname"))  
+            highCpu.append(i.get("hostname"))
+            
         if(i.get("diskusage")>=80) :
-            highDu.append(i.get("hostname"))     
+            highDu.append(i.get("hostname"))                
     if(highCpu != []) :
         print(f"Servers found with high CPU Usage are : ")
         for i in highCpu :
@@ -30,6 +33,16 @@ def usageFilter(serverInventory) :
             print(i)
     else : 
         print("No servers with high Disk usage found")
+#===========TO find highest usage=======================
+    for i in serverInventory :
+        if i.get("cpuusage")> highestCpuInt :
+                        highestCpu = i
+                        highestCpuInt = i.get("cpuusage")
+        if i.get("diskusage")> highestDuInt :
+                        highestDu = i
+                        highestDuInt = i.get("diskusage")
+    print(f"Highest CPU is {highestCpu.get("hostname")} : {highestCpu.get("cpuusage")}")
+    print(f"Highest Disk Usage is {highestDu.get("hostname")} : {highestDu.get("diskusage")}")
 def prodFilter(serverInventory) :
     prodServers , critialProdServers = [] , []
     for i in serverInventory :
@@ -37,21 +50,38 @@ def prodFilter(serverInventory) :
             prodServers.append(i)
             if(i.get("cpuusage") >= 80 ) :
                 critialProdServers.append(i)
-    print(f"Prod Servers :")
-    for i in prodServers :
-        print(f"{i.get("hostname")}")
-    print(f"Critical Prod Servers :")
-    for i in critialProdServers :
-        print(f"{i.get("hostname")}")
+    if prodServers :
+        print(f"Prod Servers :")
+        for i in prodServers :
+            print(f"{i.get("hostname")}")
+    else :
+        print(f"No Prod Servers found !")
+    if critialProdServers :
+        print(f"Critical Prod Servers :")
+        for i in critialProdServers :
+            print(f"{i.get("hostname")}")
+    else :
+        print(f"No Critical Prod Servers found !")
     return prodServers,critialProdServers
+def aliveStatus(serverInventory) :
+    up, down = 0,0
+    for i in serverInventory:
+        if i.get("status") == 'UP' :
+            up += 1
+        else :
+            down += 1
+    print(f"UP : {up}\nDOWN : {down}")
+    return up, down       
+
 for i in range(10) :
     serverCreator(i)
 for i in serverInventory :
-    print(i)
+     print(i)
 usageFilter(serverInventory)
 prodFilter(serverInventory)
-# hc, hd = usageFilter(serverInventory)
-# for i , k in hc, hd :
-# print(f"Servers with High CPU Usage are as below :")
+print(f"Server Status\n-------------")
+aliveStatus(serverInventory)
+
+
     
 
