@@ -31,15 +31,25 @@ def usageFilter(serverInventory) :
     else : 
         print("No servers with high Disk usage found")
 def prodFilter(serverInventory) :
+    prodServers , critialProdServers = [] , []
     for i in serverInventory :
-        if(i.get("environment") == "PROD")
-
- 
+        if(i.get("environment") == "PROD") : 
+            prodServers.append(i)
+            if(i.get("cpuusage") >= 80 ) :
+                critialProdServers.append(i)
+    print(f"Prod Servers :")
+    for i in prodServers :
+        print(f"{i.get("hostname")}")
+    print(f"Critical Prod Servers :")
+    for i in critialProdServers :
+        print(f"{i.get("hostname")}")
+    return prodServers,critialProdServers
 for i in range(10) :
     serverCreator(i)
 for i in serverInventory :
     print(i)
 usageFilter(serverInventory)
+prodFilter(serverInventory)
 # hc, hd = usageFilter(serverInventory)
 # for i , k in hc, hd :
 # print(f"Servers with High CPU Usage are as below :")
